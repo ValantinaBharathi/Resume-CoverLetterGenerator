@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered Cover Letter Generator</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>AI-Powered Cover Letter Generator</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+      <label for="resume">Upload your Resume</label>
+      <input type="file" id="resume" name="resume" accept=".pdf,.docx" required />
+      <button type="submit">Generate Cover Letter</button>
+    </form>
+    <div id="cover-letter-container" style="display:none;">
+      <h2>Generated Cover Letter</h2>
+      <pre id="cover-letter-text"></pre>
+      <button id="copy-text">Copy Text</button>
+      <button id="download-pdf">Download as PDF</button>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById('upload-form');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData();
+      formData.append('resume', document.getElementById('resume').files[0]);
+
+      const response = await fetch('/generate-cover-letter', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      document.getElementById('cover-letter-text').textContent = data.coverLetter;
+      document.getElementById('cover-letter-container').style.display = 'block';
+    });
+
+    document.getElementById('copy-text').addEventListener('click', () => {
+      const text = document.getElementById('cover-letter-text').textContent;
+      navigator.clipboard.writeText(text);
+    });
+
+    document.getElementById('download-pdf').addEventListener('click', () => {
+      window.location.href = '/download-pdf';
+    });
+  </script>
+</body>
+</html>
